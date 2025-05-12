@@ -7,7 +7,7 @@ SKILLS_KEYWORD = {
 
 nlp = spacy.load("en_core_web_sm")
 
-def extract_skills(text: str) -> list:
+def extract_skills(text: str) -> str:
     doc = nlp(text.lower())
     extracted = set()
 
