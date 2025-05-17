@@ -1,3 +1,5 @@
 John Doe
-Experienced software developer skilled in Python, SQL, and machine learning.
-Familiar with Flask, Docker, and AWS. Has used pandas and Git for data projects.
+john.doe@gmail.com
++1 234-567-8901
+
+Experienced software developer with a BSc in Computer Science from XYZ University.
