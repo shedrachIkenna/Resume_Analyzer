@@ -1,1 +1,6 @@
+pandas
+streamlit
 spacy
+python-multipart
+PyPDF2
+regex
