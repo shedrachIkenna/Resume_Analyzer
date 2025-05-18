@@ -4,9 +4,11 @@ import axios from "axios";
 function App() {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
+    setResult(null);
   };
 
   const handleUpload = async () => {
@@ -14,6 +16,7 @@ function App() {
 
     const formData = new FormData();
     formData.append("file", file);
+    setLoading(true);
 
     try {
       const response = await axios.post("http://127.0.0.1:8000/predict", formData, {
@@ -22,12 +25,14 @@ function App() {
       setResult(response.data);
     } catch (err) {
       console.error("Upload error:", err);
-      alert("Error uploading file");
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Smart Resume Analyzer</h1>
 
       <input type="file" accept=".pdf,.docx" onChange={handleFileChange} />
@@ -35,10 +40,24 @@ function App() {
         Upload & Analyze
       </button>
 
+      {loading && <p>⏳ Analyzing resume, please wait...</p>}
+
       {result && (
         <div style={{ marginTop: "2rem" }}>
-          <h2>Prediction Result</h2>
-          <pre>{JSON.stringify(result, null, 2)}</pre>
+          <h2>Analysis Result</h2>
+          <ul>
+            <li><strong>Name:</strong> {result.name}</li>
+            <li><strong>Email:</strong> {result.email || "Not found"}</li>
+            <li><strong>Phone:</strong> {result.phone}</li>
+            <li><strong>Skills:</strong> {result.skills.join(", ")}</li>
+            <li><strong>Predicted Roles:</strong> {result.predicted_roles.join(", ")}</li>
+          </ul>
+          <h3>Education</h3>
+          <ul>
+            {result.education.map((edu, i) => (
+              <li key={i}>{edu}</li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
