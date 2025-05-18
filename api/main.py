@@ -4,6 +4,7 @@ from nlp.info_extractor import extract_email, extract_phone, extract_name, extra
 from nlp.skill_extractor import extract_skills
 from ml.model import predict_roles
 import joblib
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -36,3 +37,12 @@ async def analyze_resume(file: UploadFile = File(...)):
         "skills": skills,
         "predicted_roles": roles
     }
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite's default port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
