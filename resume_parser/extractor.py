@@ -28,7 +28,8 @@ def extract_text_from_docx(file_bytes):
     return text
 
 def extract_email(text: str):
-    match = re.search(r'[\w\.-]+@[\w\.-]+', text)
+    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    match = re.search(pattern, text)
     return match.group(0) if match else None
 
 def extract_phone(text: str):
