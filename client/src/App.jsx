@@ -5,6 +5,7 @@ function App() {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -31,6 +32,35 @@ function App() {
     }
   };
 
+const handleDownload = async () => {
+  if (!file) {
+    alert("Please upload a resume first.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("http://localhost:8000/download", {
+    method: "POST",
+    body: formData
+  });
+
+  if (!response.ok) {
+    alert("Failed to download report.");
+    return;
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "resume_report.pdf");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
+
   return (
     <div style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Smart Resume Analyzer</h1>
@@ -38,6 +68,14 @@ function App() {
       <input type="file" accept=".pdf,.docx" onChange={handleFileChange} />
       <button onClick={handleUpload} style={{ marginLeft: "1rem" }}>
         Upload & Analyze
+      </button>
+
+      <button
+        onClick={handleDownload}
+        disabled={!file}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50 ml-10"
+      >
+        Download Report as PDF
       </button>
 
       {loading && <p>⏳ Analyzing resume, please wait...</p>}

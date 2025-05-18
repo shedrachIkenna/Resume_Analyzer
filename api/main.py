@@ -5,6 +5,8 @@ from nlp.skill_extractor import extract_skills
 from ml.model import predict_roles
 import joblib
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from utils.report_generator import generate_pdf_report
 
 app = FastAPI()
 
@@ -37,6 +39,23 @@ async def analyze_resume(file: UploadFile = File(...)):
         "skills": skills,
         "predicted_roles": roles
     }
+
+@app.post("/download")
+async def download_report(file: UploadFile = File(...)):
+    contents = await file.read()
+    text = extract_text(contents, file.filename)
+
+    data = {
+        "name": extract_name(text),
+        "email": extract_email(text),
+        "phone": extract_phone(text),
+        "education": extract_education(text),
+        "skills": extract_skills(text),
+        "predicted_roles": predict_roles(text)
+    }
+
+    pdf_path = generate_pdf_report(data)
+    return FileResponse(pdf_path, media_type='application/pdf', filename="resume_report.pdf")
 
 app.add_middleware(
     CORSMiddleware,
